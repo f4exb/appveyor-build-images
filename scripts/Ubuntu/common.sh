@@ -14,6 +14,8 @@ else
 fi
 if [[ -z "${LOGGING-}" ]]; then LOGGING=true; fi
 
+OS_ARCH=$(uname -m)
+
 function save_bash_attributes() {
     BASH_ATTRIBUTES=$(set -o)
 }
@@ -565,7 +567,7 @@ function install_nvm_nodejs() {
     else
         declare NVM_VERSIONS=( "12" "13" "14" "15" "16" "17" "18" )
     fi
-    
+
     for v in "${NVM_VERSIONS[@]}"; do
         nvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -629,7 +631,7 @@ function install_gitlfs() {
 
     curl -L -o ${FILENAME} https://github.com/git-lfs/git-lfs/releases/download/v${GITLFS_VERSION}/${FILENAME} ||
         { echo "[ERROR] Cannot download GitLFS ${GITLFS_VERSION}." 1>&2; popd; return 10; }
-    
+
     tar zxf ${FILENAME}
     ./git-lfs-${GITLFS_VERSION}/install.sh
 
@@ -745,7 +747,7 @@ function install_virtualenv() {
 
 function install_pip() {
     echo "[INFO] Running install_pip..."
-    
+
     curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py" ||
         { echo "[WARNING] Cannot download pip bootstrap script." ; return 10; }
     python get-pip.py ||
@@ -779,7 +781,7 @@ function install_pythons(){
         VENV_PATH=${HOME}/venv${i%%[abrcf]*}
         VENV_MINOR_PATH=${HOME}/venv${i%.*}
         if [ -d ${VENV_MINOR_PATH} ]; then
-            echo "Python is already installed at ${VENV_MINOR_PATH}." 
+            echo "Python is already installed at ${VENV_MINOR_PATH}."
             continue
         fi
         if [ ! -d ${VENV_PATH} ]; then
@@ -1042,11 +1044,11 @@ function install_jdks() {
     install_jdk 15 https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
         return $?
     install_jdk 16 https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?  
+        return $?
     install_jdk 17 https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?                     
+        return $?
     install_jdk 18 https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-${TAR_ARCH}_bin.tar.gz ||
-        return $?        
+        return $?
     if [ -n "${USER_NAME-}" ] && [ "${#USER_NAME}" -gt "0" ] && getent group ${USER_NAME}  >/dev/null; then
         OFS=$IFS
         IFS=$'\n'
@@ -1185,7 +1187,7 @@ function install_rubies() {
     else
         declare RUBY_VERSIONS=( "ruby-2.6" "ruby-2.7" "ruby-3.0" "ruby-3.1.2" "ruby-head" )
     fi
-    
+
     for v in "${RUBY_VERSIONS[@]}"; do
         rvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1252,13 +1254,13 @@ function install_golangs() {
     fi
     command -v gvm && gvm version ||
         { echo "Cannot find or execute gvm. Install gvm first!" 1>&2; return 10; }
-    
+
     gvm install go1.14.15 -B &&
     gvm use go1.14.15 ||
         { echo "[WARNING] Cannot install go1.4 from binaries." 1>&2; return 10; }
 
     declare GO_VERSIONS=( "go1.15.15" "go1.16.15" "go1.17.13" "go1.18.5" "go1.19" )
-    
+
     for v in "${GO_VERSIONS[@]}"; do
         gvm install ${v} ||
             { echo "[WARNING] Cannot install ${v}." 1>&2; }
@@ -1285,7 +1287,7 @@ function install_golang_arm64() {
         write_line "$USER_HOME/.profile" 'export PATH=$PATH:/usr/local/go/bin'
     else
         echo "[WARNING] User '${USER_NAME-}' not found. User's profile will not be configured."
-    fi    
+    fi
 }
 
 function pull_dockerimages() {
@@ -1372,7 +1374,7 @@ function install_docker_compose() {
 
     sudo curl -L "https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-${TAR_ARCH}" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
-    log_version docker-compose --version    
+    log_version docker-compose --version
 }
 
 function install_MSSQLServer() {

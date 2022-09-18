@@ -28,3 +28,6 @@ add_user ||
 
 copy_appveyoragent ||
      _abort $?
+
+cd /scripts
+./run_custom_scripts.sh
